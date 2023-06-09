@@ -10,14 +10,14 @@ function App() {
       <Stack direction="row" justifyContent="space-between">
         <Button
           onClick={(handleCount) => setcount(count - 1)}
-          variant="contained"
+          variant="outlined"
         >
           -
         </Button>
         <h4>{count}</h4>
         <Button
           onClick={(handleCount) => setcount(count + 1)}
-          variant="contained"
+          variant="outlined"
         >
           +
         </Button>
