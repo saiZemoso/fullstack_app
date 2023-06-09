@@ -6,7 +6,7 @@ function App() {
   const [count, setcount] = useState(0);
   return (
     <Stack alignItems="center" justifyContent="space-between">
-      <Typography>Counter</Typography>
+      <Typography>Counter app</Typography>
       <Stack direction="row" justifyContent="space-between">
         <Button
           onClick={(handleCount) => setcount(count - 1)}
