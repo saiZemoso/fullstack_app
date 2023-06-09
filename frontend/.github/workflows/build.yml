@@ -1,0 +1,47 @@
+name: build counter app
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: caching the npm dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{runner.os}}-node-${{hashFiles('**/package-lock.json')}}
+          restore-keys: ${{runner.os}}-node-
+      
+      - name: install node js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          # cache: 'npm'
+      
+      - name: install packages
+        run: npm ci
+
+      - name: build app
+        run: npm run build
+
+      - name: caching docker build
+        uses: actions/cache@v3
+        with:
+          path: var/lib/docker
+          key: ${{runner.os}}-docker-${{hashFiles('**/multistage.Dockerfile')}}
+          restore-keys: ${{runner.os}}-docker-
+
+      - name: build image
+        run: docker build -t ssrinivaspadala/multistagecounter -f multistage.Dockerfile .
+
+      - name: login docker
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASS }}
+
+      - name: push to docker hub
+        run: docker push ssrinivaspadala/multistagecounter 

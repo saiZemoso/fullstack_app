@@ -1,0 +1,53 @@
+name: sharing artifacts
+
+on:
+    push:
+      branches: [ "main" ]
+
+jobs:
+
+    upload:
+        name: upload artifact
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v2
+            - name: run a script
+              shell: bash
+              run: echo 'this is from upload job!' > testartifact.txt
+            - name: upload the artifact
+              uses: actions/upload-artifact@v2
+              with:
+                name: shared-artifact
+                path: testartifact.txt
+    
+    download:
+        name: download artifact
+        needs: upload
+        runs-on: windows-latest
+        steps:
+            - name: Download the artifact
+              uses: actions/download-artifact@v2
+              with:
+                name: shared-artifact
+            - name: run a script
+              shell: bash
+              run: echo 'this is from download job!' >> testartifact.txt
+            - name: upload again
+              uses: actions/upload-artifact@v2
+              with:
+                name: view-artifact
+                path: testartifact.txt
+    
+    view:
+        name: view artifact
+        needs: download
+        runs-on: macos-latest
+        steps:
+            - name: download the artifact
+              uses: actions/download-artifact@v2
+              with: 
+                name: view-artifact
+            - name: print the artifact
+              shell: bash
+              run: cat testartifact.txt
