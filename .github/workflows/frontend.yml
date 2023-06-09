@@ -57,5 +57,5 @@ jobs:
               with:
                 context: ./frontend
                 file: ./frontend/multistage.Dockerfile
-                push: false
+                push: true
                 tags: ${{ secrets.DOCKER_USERNAME }}/frontend_app:v${{ github.run_number }}
