@@ -27,27 +27,18 @@ jobs:
             - name: install packages and build app
               run: |
                 cd frontend
-                ls -l
                 npm ci
                 npm run build
 
-    build_push_frontend_image:
+            # - name: checkout dir
+            #   uses: actions/checkout@v3
 
-        name: build frontend image 
-        runs-on: ubuntu-latest
-        needs: build_frontend_app
-
-        steps:
-
-            - name: checkout dir
-              uses: actions/checkout@v3
-
-            - name: caching docker build
-              uses: actions/cache@v3
-              with:
-                path: var/lib/docker
-                key: ${{runner.os}}-docker-${{hashFiles('**/multistage.Dockerfile')}}
-                restore-keys: ${{runner.os}}-docker-
+            # - name: caching docker build
+            #   uses: actions/cache@v3
+            #   with:
+            #     path: var/lib/docker
+            #     key: ${{runner.os}}-docker-${{hashFiles('**/multistage.Dockerfile')}}
+            #     restore-keys: ${{runner.os}}-docker-
 
             - name: login docker
               run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASS }}
@@ -56,6 +47,6 @@ jobs:
               uses: docker/build-push-action@v4
               with:
                 context: ./frontend
-                file: ./frontend/multistage.Dockerfile
+                file: ./frontend/Dockerfile
                 push: true
                 tags: ${{ secrets.DOCKER_USERNAME }}/frontend_app:v${{ github.run_number }}
